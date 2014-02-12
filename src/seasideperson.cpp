@@ -48,6 +48,7 @@
 #include <QContactOrganization>
 #include <QContactUrl>
 #include <QContactSyncTarget>
+#include <QElapsedTimer>
 
 #include <QVersitWriter>
 #include <QVersitContactExporter>
@@ -598,6 +599,7 @@ const QString nicknameDetailNickname(QString::fromLatin1("nickname"));
 
 QVariantList SeasidePerson::nicknameDetails(const QContact &contact)
 {
+    qDebug() << Q_FUNC_INFO << contact.id();
     QVariantList rv;
 
     int index = 0;
@@ -766,6 +768,8 @@ const QString phoneDetailSubTypes(QString::fromLatin1("subTypes"));
 
 QVariantList SeasidePerson::phoneDetails(const QContact &contact)
 {
+    QElapsedTimer tm;
+    tm.start();
     QVariantList rv;
 
     int index = 0;
@@ -785,6 +789,7 @@ QVariantList SeasidePerson::phoneDetails(const QContact &contact)
         rv.append(item);
     }
 
+    qDebug() << Q_FUNC_INFO << contact.id() << tm.elapsed();
     return rv;
 }
 
@@ -872,6 +877,7 @@ QVariantList SeasidePerson::emailDetails(const QContact &contact)
         rv.append(item);
     }
 
+    qDebug() << Q_FUNC_INFO << contact.id();
     return rv;
 }
 
@@ -1046,6 +1052,8 @@ const QString addressDetailAddress(QString::fromLatin1("address"));
 
 QVariantList SeasidePerson::addressDetails(const QContact &contact)
 {
+    QElapsedTimer tm;
+    tm.start();
     QVariantList rv;
 
     int index = 0;
@@ -1059,6 +1067,7 @@ QVariantList SeasidePerson::addressDetails(const QContact &contact)
         rv.append(item);
     }
 
+    qDebug() << Q_FUNC_INFO << contact.id() << tm.elapsed();
     return rv;
 }
 
@@ -1195,6 +1204,8 @@ const QString websiteDetailUrl(QString::fromLatin1("url"));
 
 QVariantList SeasidePerson::websiteDetails(const QContact &contact)
 {
+    QElapsedTimer tm;
+    tm.start();
     QVariantList rv;
 
     int index = 0;
@@ -1208,6 +1219,7 @@ QVariantList SeasidePerson::websiteDetails(const QContact &contact)
         rv.append(item);
     }
 
+    qDebug() << Q_FUNC_INFO << contact.id() << tm.elapsed();
     return rv;
 }
 
@@ -1358,6 +1370,8 @@ const QString anniversaryDetailOriginalDate(QString::fromLatin1("originalDate"))
 
 QVariantList SeasidePerson::anniversaryDetails(const QContact &contact)
 {
+    QElapsedTimer tm;
+    tm.start();
     QVariantList rv;
 
     int index = 0;
@@ -1371,6 +1385,7 @@ QVariantList SeasidePerson::anniversaryDetails(const QContact &contact)
         rv.append(item);
     }
 
+    qDebug() << Q_FUNC_INFO << contact.id() << tm.elapsed();
     return rv;
 }
 
@@ -1540,6 +1555,8 @@ typename ListType::value_type linkedDetail(const ListType &details, const QStrin
 
 QVariantList SeasidePerson::accountDetails(const QContact &contact)
 {
+    QElapsedTimer tm;
+    tm.start();
     QVariantList rv;
 
     const QList<QContactPresence> presenceDetails(contact.details<QContactPresence>());
@@ -1575,6 +1592,7 @@ QVariantList SeasidePerson::accountDetails(const QContact &contact)
         rv.append(item);
     }
 
+    qDebug() << Q_FUNC_INFO << contact.id() << tm.elapsed();
     return rv;
 }
 
@@ -1943,6 +1961,7 @@ void SeasidePerson::fetchMergeCandidates()
 
 void SeasidePerson::resolvePhoneNumber(const QString &number, bool requireComplete)
 {
+    qDebug() << Q_FUNC_INFO << number;
     if (SeasideCache::CacheItem *item = SeasideCache::resolvePhoneNumber(this, number, requireComplete)) {
         // TODO: should this be invoked async?
         addressResolved(QString(), number, item);
@@ -1951,6 +1970,7 @@ void SeasidePerson::resolvePhoneNumber(const QString &number, bool requireComple
 
 void SeasidePerson::resolveEmailAddress(const QString &address, bool requireComplete)
 {
+    qDebug() << Q_FUNC_INFO << address;
     if (SeasideCache::CacheItem *item = SeasideCache::resolveEmailAddress(this, address, requireComplete)) {
         addressResolved(address, QString(), item);
     }
@@ -1958,6 +1978,7 @@ void SeasidePerson::resolveEmailAddress(const QString &address, bool requireComp
 
 void SeasidePerson::resolveOnlineAccount(const QString &localUid, const QString &remoteUid, bool requireComplete)
 {
+    qDebug() << Q_FUNC_INFO << localUid << remoteUid;
     if (SeasideCache::CacheItem *item = SeasideCache::resolveOnlineAccount(this, localUid, remoteUid, requireComplete)) {
         addressResolved(localUid, remoteUid, item);
     }
@@ -1965,6 +1986,8 @@ void SeasidePerson::resolveOnlineAccount(const QString &localUid, const QString 
 
 QVariantList SeasidePerson::removeDuplicatePhoneNumbers(const QVariantList &phoneNumbers)
 {
+    QElapsedTimer tm;
+    tm.start();
     QVariantList rv;
 
     foreach (const QVariant &item, phoneNumbers) {
@@ -2033,11 +2056,14 @@ QVariantList SeasidePerson::removeDuplicatePhoneNumbers(const QVariantList &phon
         }
     }
 
+    qDebug() << Q_FUNC_INFO << tm.elapsed();
     return rv;
 }
 
 QVariantList SeasidePerson::removeDuplicateOnlineAccounts(const QVariantList &onlineAccounts)
 {
+    QElapsedTimer tm;
+    tm.start();
     QVariantList rv;
 
     foreach (const QVariant &item, onlineAccounts) {
@@ -2074,6 +2100,7 @@ QVariantList SeasidePerson::removeDuplicateOnlineAccounts(const QVariantList &on
         }
     }
 
+    qDebug() << Q_FUNC_INFO << tm.elapsed();
     return rv;
 }
 
@@ -2114,6 +2141,7 @@ void SeasidePerson::addressResolved(const QString &, const QString &, SeasideCac
 
 void SeasidePerson::itemUpdated(SeasideCache::CacheItem *)
 {
+    qDebug() << Q_FUNC_INFO;
     // We don't know what has changed - report everything changed
     recalculateDisplayLabel();
     emitChangeSignals();
